@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Freccia
+Name[it]=Freccia
+Comment=Listen to Radiofreccia
+Comment[it]=Ascolta Radiofreccia
+Comment[de]=Radiofreccia hören
+Comment[fr]=Écouter Radiofreccia
+Comment[es_MX]=Escucha Radiofreccia
+Comment[pt]=Ouvir a Radiofreccia
+Exec=freccia open
+Icon=freccia
+Terminal=false
+Categories=AudioVideo;Audio;Player;
+Keywords=radio;radiofreccia;rock;stream;
+StartupWMClass=freccia

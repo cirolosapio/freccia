@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="Main.qml">Main.qml</file>
+        <file alias="i18n/it.json">i18n/it.json</file>
+        <file alias="i18n/de.json">i18n/de.json</file>
+        <file alias="i18n/fr.json">i18n/fr.json</file>
+        <file alias="i18n/es-MX.json">i18n/es-MX.json</file>
+        <file alias="i18n/pt.json">i18n/pt.json</file>
+    </qresource>
+</RCC>

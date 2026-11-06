@@ -1,0 +1,7 @@
+{
+  "tooltip.playing": "Radiofreccia — läuft",
+  "tooltip.connecting": "Radiofreccia — verbinde…",
+  "tooltip.retrying": "Radiofreccia — keine Verbindung, neuer Versuch: %1",
+  "tooltip.off": "Radiofreccia — aus",
+  "tooltip.hint": "Klick: ein/aus · Rechtsklick: Fenster · Scrollen: Lautstärke"
+}

@@ -1,0 +1,31 @@
+pkgname=freccia
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Radiofreccia on and off, from a window, the Omarchy bar, or the terminal'
+arch=('x86_64' 'aarch64')
+license=('MIT')
+depends=('qt6-base' 'qt6-declarative' 'qt6-multimedia' 'qt6-multimedia-ffmpeg' 'qt6-wayland' 'ffmpeg')
+makedepends=('gcc' 'make')
+source=()
+sha256sums=()
+
+build() {
+  cd "$startdir/.."
+  ./bin/build
+}
+
+package() {
+  cd "$startdir/.."
+  install -Dm755 build/freccia "$pkgdir/usr/bin/freccia"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$startdir/freccia.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/freccia.svg"
+  install -Dm644 "$startdir/freccia.desktop" "$pkgdir/usr/share/applications/freccia.desktop"
+
+  # The Omarchy bar widget; `freccia bar install` copies it into the shell.
+  install -Dm644 plugin/manifest.json "$pkgdir/usr/share/freccia/omarchy-plugin/manifest.json"
+  install -Dm644 plugin/Widget.qml "$pkgdir/usr/share/freccia/omarchy-plugin/Widget.qml"
+  install -Dm644 plugin/Model.js "$pkgdir/usr/share/freccia/omarchy-plugin/Model.js"
+  for catalog in plugin/i18n/*.json; do
+    install -Dm644 "$catalog" "$pkgdir/usr/share/freccia/omarchy-plugin/i18n/$(basename "$catalog")"
+  done
+}

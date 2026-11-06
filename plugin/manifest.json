@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "freccia.radio",
+  "name": "Freccia",
+  "version": "0.1.0",
+  "author": "Freccia",
+  "license": "MIT",
+  "description": "Switch Radiofreccia on and off from the Omarchy bar.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  },
+  "barWidget": {
+    "displayName": "Freccia",
+    "description": "Radiofreccia on and off with a click, volume with the wheel, the window with a right-click.",
+    "category": "Media",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

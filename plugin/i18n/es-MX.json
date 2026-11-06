@@ -1,0 +1,7 @@
+{
+  "tooltip.playing": "Radiofreccia — al aire",
+  "tooltip.connecting": "Radiofreccia — conectando…",
+  "tooltip.retrying": "Radiofreccia — no se puede conectar, reintentando: %1",
+  "tooltip.off": "Radiofreccia — apagada",
+  "tooltip.hint": "Clic: encender/apagar · Clic derecho: ventana · Rueda: volumen"
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#FFD60A"/>
+  <g fill="none" stroke="#0e0e10" stroke-width="4" stroke-linecap="round">
+    <!-- Broadcast waves either side of the mast. -->
+    <path d="M21 20a16 16 0 0 0 0 22"/>
+    <path d="M43 20a16 16 0 0 1 0 22"/>
+    <path d="M14 13a26 26 0 0 0 0 36"/>
+    <path d="M50 13a26 26 0 0 1 0 36"/>
+    <!-- An arrow, the "freccia", rising up the mast. -->
+    <path d="M32 52V24"/>
+    <path d="M24 31l8-9 8 9"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+mkdir -p "$ROOT/build/tests"
+cd "$ROOT/build/tests"
+
+qmake6 "$ROOT/tests/freccia_tests.pro"
+make -j"$(nproc)"
+QT_QPA_PLATFORM=offscreen ./freccia_tests
+
+# The bar widget's own logic, which runs inside the Omarchy shell.
+node "$ROOT/tests/plugin_model_test.mjs"
