@@ -145,7 +145,9 @@ QString pluginSource() {
 
 int run(const QString &program, const QStringList &arguments) {
     QProcess process;
-    process.setProcessChannelMode(QProcess::ForwardedChannels);
+    // The omarchy commands report each try; Freccia says what came of it.
+    process.setStandardOutputFile(QProcess::nullDevice());
+    process.setStandardErrorFile(QProcess::nullDevice());
     process.start(program, arguments);
     if (!process.waitForFinished(30000))
         return -1;
@@ -194,8 +196,16 @@ int runBar(int argc, char *argv[], const QString &action) {
         }
     }
     run("omarchy-shell", {"shell", "rescanPlugins"});
-    if (run("omarchy", {"plugin", "enable", PluginId, "--section", "right", "--before", "omarchy.audio"}) != 0
-        && run("omarchy", {"plugin", "enable", PluginId, "--section", "right"}) != 0) {
+    // The shell rescans in the background, so the widget may not be known for
+    // a moment. Beside the volume icon when the bar has one, else on the right.
+    bool enabled = false;
+    for (int attempt = 0; attempt < 10 && !enabled; ++attempt) {
+        if (attempt > 0)
+            QThread::msleep(500);
+        enabled = run("omarchy", {"plugin", "enable", PluginId, "--section", "right", "--before", "omarchy.audio"}) == 0
+               || run("omarchy", {"plugin", "enable", PluginId, "--section", "right"}) == 0;
+    }
+    if (!enabled) {
         err(Cli::tr("The Omarchy shell didn't accept the widget."));
         return 1;
     }
