@@ -1,0 +1,80 @@
+name: Build and release
+
+# Every push and pull request is tested and packaged. Pushing a tag such as
+# v0.2.0 also publishes a GitHub release with the Arch package attached.
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Test and build the Arch package
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm --needed \
+            base-devel git nodejs \
+            qt6-base qt6-declarative qt6-multimedia qt6-multimedia-ffmpeg qt6-wayland ffmpeg
+
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches the package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkgver="$(sed -n 's/^pkgver=//p' pkgbuild/PKGBUILD)"
+          plugin="$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' plugin/manifest.json)"
+          if [ "$tag" != "$pkgver" ] || [ "$tag" != "$plugin" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match pkgver=$pkgver in pkgbuild/PKGBUILD and version $plugin in plugin/manifest.json"
+            exit 1
+          fi
+
+      # makepkg refuses to run as root, so the build runs as its own user.
+      - name: Set up a build user
+        run: |
+          useradd -m builder
+          chown -R builder: "$GITHUB_WORKSPACE"
+
+      - name: Run the tests
+        run: |
+          mkdir -p -m700 /tmp/runtime-builder && chown builder: /tmp/runtime-builder
+          su builder -c 'XDG_RUNTIME_DIR=/tmp/runtime-builder ./bin/test'
+
+      - name: Build the package
+        run: su builder -c 'cd pkgbuild && makepkg -f --noconfirm'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: freccia-arch-package
+          path: pkgbuild/*.pkg.tar.zst
+          if-no-files-found: error
+
+  release:
+    name: Publish the release
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: freccia-arch-package
+          path: dist
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.pkg.tar.zst \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Freccia ${GITHUB_REF_NAME#v}" \
+            --generate-notes
