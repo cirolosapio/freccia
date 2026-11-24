@@ -2,6 +2,7 @@
 
 #include <QAudioOutput>
 #include <QJsonObject>
+#include <QMediaDevices>
 #include <QMediaPlayer>
 #include <QObject>
 #include <QProcess>
@@ -63,6 +64,7 @@ signals:
 
 private:
     void connectStream();
+    void followDefaultOutput();
     void fail(const QString &message);
     void probeNowPlaying();
     void setNowPlaying(const NowPlaying &now);
@@ -71,6 +73,7 @@ private:
     QSettings *m_settings;
     QMediaPlayer m_player;
     QAudioOutput m_output;
+    QMediaDevices m_devices;
     QTimer m_retry;
     bool m_on = false;
     QString m_error;

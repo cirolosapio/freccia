@@ -17,6 +17,11 @@ Radio::Radio(const QUrl &stream, QSettings *settings, QObject *parent)
     m_output.setVolume(m_volume / 100.0);
     m_output.setMuted(m_muted);
 
+    // QAudioOutput keeps the output that was the default when it was made, and
+    // Qt pins the stream there so the system can't move it either. Follow the
+    // default by hand, so headphones that connect later take the radio along.
+    connect(&m_devices, &QMediaDevices::audioOutputsChanged, this, &Radio::followDefaultOutput);
+
     // A live stream drops now and then (Wi-Fi changes, CDN hiccups). While the
     // radio is on, every failure schedules another try instead of giving up.
     m_retry.setSingleShot(true);
@@ -114,6 +119,12 @@ void Radio::connectStream() {
     m_player.setSource(m_stream);
     m_player.play();
     emit changed();
+}
+
+void Radio::followDefaultOutput() {
+    const QAudioDevice device = QMediaDevices::defaultAudioOutput();
+    if (!device.isNull() && device != m_output.device())
+        m_output.setDevice(device);
 }
 
 void Radio::fail(const QString &message) {
